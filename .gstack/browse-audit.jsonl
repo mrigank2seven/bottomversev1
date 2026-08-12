@@ -1,0 +1,11 @@
+{"ts":"2026-08-12T20:28:10.187Z","cmd":"goto","args":"http://127.0.0.1:3000/fit-guide.html","origin":"http://127.0.0.1:3000/fit-guide.html","durationMs":194,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-12T20:28:12.744Z","cmd":"screenshot","args":"/tmp/fit-guide-before.png","origin":"http://127.0.0.1:3000/fit-guide.html","durationMs":2490,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-12T20:28:14.051Z","cmd":"css","args":"body font-family","origin":"about:blank","durationMs":3,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-12T20:28:14.155Z","cmd":"snapshot","args":"-i -c","origin":"about:blank","durationMs":31,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-12T20:28:19.519Z","cmd":"tabs","args":"","origin":"about:blank","durationMs":6,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-12T20:28:19.592Z","cmd":"url","args":"","origin":"about:blank","durationMs":0,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-12T20:28:19.674Z","cmd":"snapshot","args":"-c","origin":"about:blank","durationMs":23,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-12T20:28:32.496Z","cmd":"goto","args":"http://127.0.0.1:3000/fit-guide.html","origin":"http://127.0.0.1:3000/fit-guide.html","durationMs":267,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-12T20:28:32.583Z","cmd":"url","args":"","origin":"http://127.0.0.1:3000/fit-guide.html","durationMs":4,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-12T20:28:32.662Z","cmd":"tabs","args":"","origin":"http://127.0.0.1:3000/fit-guide.html","durationMs":2,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-08-12T20:28:33.492Z","cmd":"screenshot","args":"/tmp/fit-guide-before.png","origin":"http://127.0.0.1:3000/fit-guide.html","durationMs":733,"status":"ok","hasCookies":false,"mode":"launched"}
