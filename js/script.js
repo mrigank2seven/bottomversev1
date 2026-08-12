@@ -1,6 +1,9 @@
 const sharedPageStyles = document.createElement('link');
+const isNestedPage = window.location.pathname.includes('/pages/');
+const pageRoot = isNestedPage ? '' : 'pages/';
+const assetRoot = isNestedPage ? '../' : '';
 sharedPageStyles.rel = 'stylesheet';
-sharedPageStyles.href = 'css/pages.css';
+sharedPageStyles.href = `${assetRoot}css/pages.css`;
 document.head.append(sharedPageStyles);
 
 function addFitGuideLink(selector, label) {
@@ -8,13 +11,30 @@ function addFitGuideLink(selector, label) {
   if (!navigation || navigation.querySelector('[href="fit-guide.html"]')) return;
 
   const link = document.createElement('a');
-  link.href = 'fit-guide.html';
+  link.href = `${pageRoot}fit-guide.html`;
   link.textContent = label;
   navigation.append(link);
 }
 
 addFitGuideLink('.nav-links', 'Size & Fit Guide');
 addFitGuideLink('.mobile-nav', 'Size & Fit Guide');
+
+function addStoryLink(selector) {
+  const navigation = document.querySelector(selector);
+  if (!navigation || navigation.querySelector('[href="story.html"]')) return;
+
+  const link = document.createElement('a');
+  link.href = `${pageRoot}story.html`;
+  link.textContent = 'Our Story';
+  if (window.location.pathname.endsWith('/story.html')) {
+    link.classList.add('active');
+    link.setAttribute('aria-current', 'page');
+  }
+  navigation.append(link);
+}
+
+addStoryLink('.nav-links');
+addStoryLink('.mobile-nav');
 
 const menuButton = document.querySelector('.menu-button');
 const mobileNav = document.querySelector('.mobile-nav');
