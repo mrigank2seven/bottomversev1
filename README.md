@@ -2,6 +2,8 @@
 
 Static site for BOTTOMVERSE.
 
+Contact: Archit Kumar
+
 ## Structure
 
 - `index.html` — home page
