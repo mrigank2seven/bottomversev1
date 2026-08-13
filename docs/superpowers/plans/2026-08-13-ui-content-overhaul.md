@@ -25,7 +25,7 @@
 ## Task 1: Design tokens & CSS de-duplication
 
 **Files:**
-- Modify: `css/styles.css:1` (root token block), `css/styles.css:12-24` and `css/styles.css:27-36` (duplicate nav/cart rules)
+- Modify: `css/styles.css:1` (root token block), the 6 display-heading selectors listed in Step 2, `css/styles.css:12-24` and `css/styles.css:27-36` (duplicate nav/cart rules)
 
 **Interfaces:**
 - Produces: CSS custom properties `--space-1`..`--space-5`, `--display-xs`, `--display-sm`, `--display-md`, `--display-lg`, `--display-xl`, `--motion-fast`, `--motion-base` on `:root`, consumed by every later task's CSS.
@@ -55,9 +55,89 @@ Replace with (same selector, new properties appended — no existing property is
 }
 ```
 
-This is additive only — do not rewrite the per-selector `clamp()` calls elsewhere in this pass (that's a larger, separate refactor outside this plan's scope; the spec calls for adding tokens as a foundation, not a full retrofit of every heading).
+- [ ] **Step 2: Retrofit the display headings the spec cites onto the new tokens**
 
-- [ ] **Step 2: Remove the duplicate nav/cart block**
+The spec names three ad-hoc ranges as its motivating example — `clamp(58px,8.4vw,128px)`, `clamp(61px,7vw,108px)`, `clamp(62px,9vw,145px)` — and asks for consolidation into 5 named steps, not just declaring unused tokens. These 5 selector groups in `css/styles.css` already match the 5 tiers above almost exactly (the tier values were derived from them), so this is a direct swap, done in this same task since it's the same file and the tokens have no other consumer yet:
+
+Find:
+
+```css
+.hero h1,.drop h2,.fit-title h2,.size-heading h2,.colour-title h2,.contact h2 { font:400 clamp(58px,8.4vw,128px)/.78 var(--display); letter-spacing:-.09em; margin:0; text-transform:uppercase; }
+```
+
+Replace with:
+
+```css
+.hero h1,.drop h2,.fit-title h2,.size-heading h2,.colour-title h2,.contact h2 { font:400 var(--display-lg)/.78 var(--display); letter-spacing:-.09em; margin:0; text-transform:uppercase; }
+```
+
+Find (in the `.fit-section` block) and delete this rule entirely — it's a standalone `108px`-max override that exists only because `.fit-title h2` needed a smaller size than its siblings in the rule above; consolidating means it now shares `--display-lg` like the rest of that selector group (a small, intentional visual size increase on this one heading, which is the point of consolidating "all slightly different for no reason" into shared steps):
+
+```css
+.fit-title h2 { font-size:clamp(61px,7vw,108px); }
+```
+
+Find:
+
+```css
+.product-copy h2 { font-size:clamp(48px,5.6vw,83px); margin-top:24px; }
+```
+
+Replace with:
+
+```css
+.product-copy h2 { font-size:var(--display-sm); margin-top:24px; }
+```
+
+Find:
+
+```css
+.store-heading h1,.checkout-intro h1,.store-empty h1,.order-success h1,.account-hero h1 { font:400 clamp(62px,9vw,145px)/.76 var(--display); letter-spacing:-.1em; margin:38px 0 0; text-transform:uppercase; }
+```
+
+Replace with:
+
+```css
+.store-heading h1,.checkout-intro h1,.store-empty h1,.order-success h1,.account-hero h1 { font:400 var(--display-xl)/.76 var(--display); letter-spacing:-.1em; margin:38px 0 0; text-transform:uppercase; }
+```
+
+Find:
+
+```css
+.shop-featured-head h2 { font:400 clamp(42px,6vw,80px)/.8 var(--display); letter-spacing:-.09em; margin:20px 0 0; }
+```
+
+Replace with:
+
+```css
+.shop-featured-head h2 { font:400 var(--display-sm)/.8 var(--display); letter-spacing:-.09em; margin:20px 0 0; }
+```
+
+Find:
+
+```css
+.shop-product-info h2 { font:400 clamp(28px,3vw,48px)/.85 var(--display); letter-spacing:-.07em; margin:16px 0 12px; max-width:400px; }
+```
+
+Replace with:
+
+```css
+.shop-product-info h2 { font:400 var(--display-xs)/.85 var(--display); letter-spacing:-.07em; margin:16px 0 12px; max-width:400px; }
+```
+
+The remaining scattered `clamp()` display sizes in `css/pages.css`, `css/story.css`, and elsewhere in `css/styles.css` (e.g. `.page-kicker h1`, `.story-hero h1`, `.support-intro h1`) are a materially larger retrofit (different files, no exact tier match) and stay out of scope for this plan, matching every other file this plan does not touch.
+
+- [ ] **Step 3: Verify the retrofit**
+
+Run: `grep -c 'var(--display-' css/styles.css`
+Expected: `6` (one per selector group touched above).
+
+Run: `grep -c 'clamp(61px,7vw,108px)' css/styles.css`
+Expected: `0` (confirms the standalone `.fit-title h2` override was deleted, not just edited).
+
+Open `pages/fit.html` in a browser and confirm the "ROOM TO MOVE." heading is visibly a bit larger than before (the intentional consolidation change) and still fits within the `.fit-title` column without overlapping the fit diagram.
+
+- [ ] **Step 4: Remove the duplicate nav/cart block**
 
 `css/styles.css` has two verbatim-identical rule blocks. The first (around line 12-24, introduced first) stays; delete the second (around line 27-36). Locate the second occurrence — it starts with:
 
@@ -74,7 +154,7 @@ footer { display:block; padding:0 clamp(22px,6vw,96px); }
 
 Delete every rule in that second block that is a verbatim duplicate of a rule already present in the first block (`.nav-links`, `.nav-links a`, `.nav-links a.active`, `.nav-actions`, `.nav-shop,.cart-link`, `.nav-shop:hover,.cart-link:hover`, `.nav-shop.active`, `.cart-link`, `.cart-icon`, `.cart-count`). Keep the two rules in that section that are genuinely new (`.mobile-nav-divider`, `.mobile-nav-secondary`, `.mobile-nav-secondary a`, `.mobile-nav-shop`) — those don't exist in the first block.
 
-- [ ] **Step 3: Verify no rule was lost**
+- [ ] **Step 5: Verify no rule was lost**
 
 Run: `grep -c '\.nav-shop,\.cart-link {' css/styles.css`
 Expected: `1` (was `2` before this step — confirms the duplicate is gone, not both copies).
@@ -82,11 +162,11 @@ Expected: `1` (was `2` before this step — confirms the duplicate is gone, not 
 Run: `grep -c '\.mobile-nav-secondary {' css/styles.css`
 Expected: `1` (confirms the non-duplicate rules survived).
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
 git add css/styles.css
-git commit -m "refactor: add design tokens, remove duplicate nav/cart CSS block"
+git commit -m "refactor: add design tokens, retrofit 6 display headings onto them, remove duplicate nav/cart CSS block"
 ```
 
 ---
@@ -98,15 +178,23 @@ git commit -m "refactor: add design tokens, remove duplicate nav/cart CSS block"
 - Modify: all 13 HTML files (insert sprite), `css/styles.css` (add `.garment-svg` positioning rule and remove old `.tee` clip-path rule, done fully in Task 4 alongside markup changes — this task only adds the sprite defs)
 
 **Interfaces:**
-- Produces: 4 reusable symbols — `#tee-front`, `#tee-tech`, `#tee-flat`, `#tee-body` — consumed by Task 4's markup changes on every page that currently renders a `.tee` div.
+- Produces: 4 reusable symbols — `#tee-front`, `#tee-tech`, `#tee-flat`, `#tee-body` — consumed by Task 4's markup changes on every page that currently renders a `.tee` div. Also produces `#fabric-weave` (SVG filter) and `#halftone-dots` (SVG pattern), consumed by Task 4's `.garment-svg` CSS and by the badge/sticker halftone step.
 
 - [ ] **Step 1: Define the sprite block**
 
-This exact block (hidden, not rendered) is inserted as the first child of `<body>` in every one of the 13 HTML files:
+This exact block (hidden, not rendered) is inserted as the first child of `<body>` in every one of the 13 HTML files. Two shared primitives — `#fabric-weave` (a subtle `feTurbulence` filter, spec: "usable across all four" symbols) and `#halftone-dots` (a dot pattern for background fill treatments, extending the existing sticker/badge language) — are declared once here alongside the 4 symbols:
 
 ```html
 <svg hidden aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
   <defs>
+    <filter id="fabric-weave" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="weave"/>
+      <feColorMatrix in="weave" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.05 0" result="weaveAlpha"/>
+      <feComposite in="weaveAlpha" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <pattern id="halftone-dots" width="8" height="8" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.1" fill="currentColor"/>
+    </pattern>
     <symbol id="tee-front" viewBox="0 0 240 260">
       <path class="garment-outline" d="M40,0 Q62,20 84,22 Q120,32 156,22 Q178,20 200,0 L240,46 L195,84 L195,252 Q195,258 189,258 L51,258 Q45,258 45,252 L45,84 L0,46 Z" fill="var(--ink)"/>
       <path class="garment-rib" d="M70,20 Q120,34 170,20" fill="none" stroke="var(--acid)" stroke-width="2"/>
@@ -150,6 +238,9 @@ Files to edit: `index.html`, `pages/drop.html`, `pages/fit.html`, `pages/style.h
 
 Run: `grep -L 'id="tee-front"' index.html pages/*.html`
 Expected: no output (empty — every file contains the sprite).
+
+Run: `grep -L 'id="fabric-weave"' index.html pages/*.html`
+Expected: no output (empty — confirms the filter/pattern defs travel with the symbols on every page, not just some).
 
 - [ ] **Step 4: Commit**
 
@@ -335,15 +426,15 @@ shipping the real nav/footer directly."
 ## Task 4: Swap the reused clip-path tee for the SVG garment system
 
 **Files:**
-- Modify: `index.html`, `pages/drop.html`, `pages/fit.html`, `pages/style.html`, `js/script.js` (`productVisual` and surrounding render functions), `css/styles.css` (`.tee`/`.tee-hero`/`.tee-product`/`.tee-diagram`/`.tee-measure`/`.shop-tee`/`.look:before`/`.look:after` rules)
+- Modify: `index.html`, `pages/drop.html`, `pages/fit.html`, `pages/style.html`, `js/script.js` (`productVisual` and surrounding render functions), `css/styles.css` (`.tee`/`.tee-hero`/`.tee-product`/`.tee-diagram`/`.tee-measure`/`.shop-tee`/`.look:before`/`.look:after`/`.stage-badge`/`.sticker` rules)
 
 **Interfaces:**
-- Consumes: `#tee-front`/`#tee-tech`/`#tee-flat`/`#tee-body` symbols from Task 2.
-- Produces: `.garment-svg` CSS class (absolute-positioned SVG filling its wrapper), consumed by no later task — this is the terminal consumer of the sprite.
+- Consumes: `#tee-front`/`#tee-tech`/`#tee-flat`/`#tee-body` symbols and `#fabric-weave`/`#halftone-dots` primitives from Task 2.
+- Produces: `.garment-svg` CSS class (absolute-positioned, filtered SVG filling its wrapper) and `.badge-halftone` CSS class, consumed by no later task — this is the terminal consumer of the sprite.
 
 ### CSS changes
 
-- [ ] **Step 1: Replace the old `.tee` rule with `.garment-svg` positioning**
+- [ ] **Step 1: Replace the old `.tee` rule with `.garment-svg` positioning, applying the shared fabric-weave filter**
 
 In `css/styles.css`, find:
 
@@ -354,8 +445,10 @@ In `css/styles.css`, find:
 Replace with:
 
 ```css
-.garment-svg { inset:0; position:absolute; height:100%; width:100%; }
+.garment-svg { filter:url(#fabric-weave); inset:0; position:absolute; height:100%; width:100%; }
 ```
+
+`#fabric-weave` is a static filter (no animation/transition), so it is not gated behind `prefers-reduced-motion` — only actual motion is gated per the spec, and a fixed noise texture composited at 5% alpha isn't motion. Applying it via the shared `.garment-svg` class means every one of the 4 symbols gets it uniformly, matching the spec's "usable across all four."
 
 The wrapper elements that used to carry `.tee` (`.tee-hero`, `.tee-product`, `.tee-diagram`, `.tee-measure`) already have `position:relative` from their own existing rules (verify — `.tee-hero` does via its own block; `.tee-product`, `.tee-diagram`, `.tee-measure` do too), so removing the shared `.tee` class does not remove positioning context. Text overlay rules (`.tee-hero span`, `.tee-hero b`, `.tee-hero i`, `.tee-product span/b/i`, `.tee-diagram b`, `.tee-measure b`) are untouched — they continue to position relative to the same wrapper.
 
@@ -390,9 +483,63 @@ Delete both rules (and the `.look-bone:before{color:#eeeae0}`/`.look-moss:before
 Run: `grep -c 'clip-path' css/styles.css`
 Expected: `0`.
 
+- [ ] **Step 5: Add `.badge-halftone` styling for the halftone-dots pattern**
+
+Spec: "a halftone dot pattern for background fill treatments (extending the existing sticker/badge language rather than introducing a new one)." The two existing badge/sticker elements are `.stage-badge` (`pages/drop.html`) and `.sticker-top` (`index.html`). Add `overflow:hidden` to the existing `.stage-badge` rule (so the pattern layer is clipped to the circle) and add a new rule:
+
+Find:
+
+```css
+.stage-badge { align-items:center; background:var(--acid); border-radius:50%; bottom:24px; display:flex; flex-direction:column; font:400 32px/.73 var(--display); height:94px; justify-content:center; position:absolute; right:24px; transform:rotate(-13deg); width:94px; }
+```
+
+Replace with:
+
+```css
+.stage-badge { align-items:center; background:var(--acid); border-radius:50%; bottom:24px; display:flex; flex-direction:column; font:400 32px/.73 var(--display); height:94px; justify-content:center; overflow:hidden; position:absolute; right:24px; transform:rotate(-13deg); width:94px; }
+```
+
+Add, anywhere in the file:
+
+```css
+.badge-halftone { color:var(--ink); height:100%; inset:0; opacity:.15; position:absolute; width:100%; }
+```
+
+`.sticker` already has `position:absolute`, which is a valid containing block for its own absolutely-positioned children, so no change is needed to the `.sticker` rule itself for `.badge-halftone` to size correctly inside it.
+
+- [ ] **Step 6: Add the halftone layer to `.stage-badge` (`pages/drop.html`)**
+
+Old:
+
+```html
+<div class="stage-badge">240<br><small>GSM</small></div>
+```
+
+New:
+
+```html
+<div class="stage-badge"><svg class="badge-halftone" aria-hidden="true"><rect width="100%" height="100%" fill="url(#halftone-dots)"/></svg>240<br><small>GSM</small></div>
+```
+
+- [ ] **Step 7: Add the halftone layer to `.sticker-top` (`index.html`)**
+
+Old:
+
+```html
+<div class="sticker sticker-top">240 GSM<br>100% COTTON</div>
+```
+
+New:
+
+```html
+<div class="sticker sticker-top"><svg class="badge-halftone" aria-hidden="true"><rect width="100%" height="100%" fill="url(#halftone-dots)"/></svg>240 GSM<br>100% COTTON</div>
+```
+
+At 15% opacity the dot pattern sits quietly behind the existing text in both cases — no legibility change to verify beyond the general visual check below.
+
 ### Markup changes
 
-- [ ] **Step 5: `index.html` hero tee**
+- [ ] **Step 8: `index.html` hero tee**
 
 Old:
 ```html
@@ -404,7 +551,7 @@ New:
 <div class="tee-hero"><svg class="garment-svg" aria-hidden="true"><use href="#tee-front"></use></svg><span>BV</span><b>OVERSIZED<br>IS THE<br>POINT.</b><i>DROP<br>001</i></div>
 ```
 
-- [ ] **Step 6: `pages/drop.html` product-stage tee**
+- [ ] **Step 9: `pages/drop.html` product-stage tee**
 
 Old:
 ```html
@@ -416,7 +563,7 @@ New:
 <div class="tee-product"><svg class="garment-svg" aria-hidden="true"><use href="#tee-front"></use></svg><span>bottom<br>verse</span><b>MADE FOR<br>EVERYDAY<br>CHAOS</b><i>01</i></div>
 ```
 
-- [ ] **Step 7: `pages/fit.html` diagram tee and measure-card tee**
+- [ ] **Step 10: `pages/fit.html` diagram tee and measure-card tee**
 
 Old (diagram):
 ```html
@@ -438,7 +585,7 @@ New:
 <div class="tee-measure"><svg class="garment-svg" aria-hidden="true"><use href="#tee-tech"></use></svg><b>BV</b></div>
 ```
 
-- [ ] **Step 8: `pages/style.html` — add `#tee-body` mark to each of the 3 looks**
+- [ ] **Step 11: `pages/style.html` — add `#tee-body` mark to each of the 3 looks**
 
 In each of the three `<article class="look look-*">` elements, add the SVG as the first child (before the existing `<span>` index number). Example for the first (`look-black`):
 
@@ -454,7 +601,7 @@ New:
 
 Apply the same pattern (insert the identical `<svg class="garment-svg" aria-hidden="true"><use href="#tee-body"></use></svg>` as the first child) to `look-bone` and `look-moss` articles.
 
-- [ ] **Step 9: `js/script.js` — `productVisual()`**
+- [ ] **Step 12: `js/script.js` — `productVisual()`**
 
 Old:
 ```js
@@ -472,11 +619,11 @@ function productVisual(label = 'DROP<br>001') {
 
 This single function is used by both `renderShopPage()` (shop grid cards) and `renderCartPage()` (cart thumbnails, which additionally scale it down via the existing `.cart-product-visual .shop-tee` CSS override) — no other change needed in either caller.
 
-- [ ] **Step 10: Manual visual check**
+- [ ] **Step 13: Manual visual check**
 
-Open `index.html`, `pages/drop.html`, `pages/fit.html`, `pages/style.html`, `pages/shop.html`, `pages/cart.html` (after adding an item to cart) in a browser. Confirm each garment renders as a visible shape (not a blank/broken `<use>`) and that overlay text (`BV`, `bottomverse`, size numbers) still sits in the same visual position as before.
+Open `index.html`, `pages/drop.html`, `pages/fit.html`, `pages/style.html`, `pages/shop.html`, `pages/cart.html` (after adding an item to cart) in a browser. Confirm each garment renders as a visible shape (not a blank/broken `<use>`) and that overlay text (`BV`, `bottomverse`, size numbers) still sits in the same visual position as before. Confirm the fabric-weave texture reads as a faint grain on the garment fills, not an obvious/heavy pattern, and that scrolling `index.html`/`pages/style.html` (the pages with the most `.garment-svg` instances on screen at once) feels smooth with no visible jank from the filter. Confirm the halftone dot pattern is faintly visible behind the "240 GSM" text on both `index.html`'s sticker and `pages/drop.html`'s circular badge, without hurting legibility.
 
-- [ ] **Step 11: Commit**
+- [ ] **Step 14: Commit**
 
 ```bash
 git add index.html pages/drop.html pages/fit.html pages/style.html js/script.js css/styles.css
@@ -484,7 +631,9 @@ git commit -m "feat: replace single clip-path tee with SVG garment system
 
 Front/tech/flat/body variants replace one reused clip-path shape
 across hero, product stage, fit diagram, measure card, shop grid,
-cart thumbnails, and the three Style Lab looks."
+cart thumbnails, and the three Style Lab looks. Adds the shared
+fabric-weave filter to all four variants and a halftone-dot pattern
+behind the GSM sticker/badge."
 ```
 
 ---
@@ -861,7 +1010,9 @@ git commit -m "chore: delete unused off-brand stock photos, wire founder photo i
 
 ## Self-Review Notes
 
-- **Spec coverage:** nav/footer fix (Task 3), design tokens + CSS dedup (Task 1), SVG garment system (Tasks 2, 4), motion behind `prefers-reduced-motion` (Tasks 5, 6), accessibility (Task 7), SEO (Task 8), imagery (Task 9) — every spec section maps to at least one task.
+- **Spec coverage:** nav/footer fix (Task 3), design tokens + CSS dedup + display-heading retrofit (Task 1), SVG garment system including the shared fabric-weave filter and halftone-dots pattern (Tasks 2, 4), motion behind `prefers-reduced-motion` (Tasks 5, 6), accessibility (Task 7), SEO (Task 8), imagery (Task 9) — every spec section maps to at least one task.
 - **No test framework exists in this repo** (confirmed during spec research — no `package.json`, no test runner). "Test" steps in this plan are `grep`-based structural verification plus manual browser checks, matching the spec's own Verification Plan section rather than inventing a test framework this static site doesn't have.
-- **Type/name consistency check:** `.garment-svg` (Task 2/4), `[data-reveal]`/`.is-visible` (Task 5/6), `#tee-front`/`#tee-tech`/`#tee-flat`/`#tee-body` (Task 2, consumed identically in Task 4) — all names match across the tasks that define vs. consume them.
+- **Type/name consistency check:** `.garment-svg` (Task 2/4), `.badge-halftone` (Task 4), `[data-reveal]`/`.is-visible` (Task 5/6), `#tee-front`/`#tee-tech`/`#tee-flat`/`#tee-body`/`#fabric-weave`/`#halftone-dots` (Task 2, consumed identically in Task 4), `--display-xs`/`--display-sm`/`--display-lg`/`--display-xl` (Task 1, defined and consumed in the same task) — all names match across the tasks that define vs. consume them.
+- **Revision note (post-commit patch):** this plan was committed once already (`6dc48aa`), then patched in a follow-up pass before execution to close two gaps found on review: (1) the spec's shared `feTurbulence` fabric-weave filter and halftone-dots pattern were missing from the sprite entirely — added to Task 2 and wired up in Task 4 (`.garment-svg` filter + `.badge-halftone` on the GSM sticker/badge); (2) the design-token step declared tokens but didn't apply any of them — Task 1 now retrofits the 6 selector groups matching the spec's own cited `clamp()` examples onto the new `--display-*` tokens. Remaining scattered `clamp()` calls in `pages.css`/`story.css` and elsewhere in `styles.css` are explicitly still out of scope (no exact tier match, different files).
+- **Known deviation from the spec's abbreviated nav description:** the spec's Decisions section describes the canonical nav-links as "Home / Drop 001 / Oversized Fit / Style Lab, Shop + Cart actions" (4 items), but also says this must match "what `script.js` currently renders at runtime" — and `script.js`'s actual `primaryLinks` array renders 6 items (adding Size & Fit Guide and Our Story). This plan's Active-State Table (Task 3) follows the verified 6-link runtime behavior, treating the spec's prose as an abbreviation rather than a literal exhaustive list, since the spec itself names runtime behavior as the source of truth.
 - Task ordering matters: Task 2 (sprite) before Task 4 (swap markup to use it); Task 5 (CSS reveal states) before Task 6 (JS that toggles them); Task 3 (nav/footer) is independent and could run in parallel with Task 1/2, but is sequenced early since it's the highest-value fix.
