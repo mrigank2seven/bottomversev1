@@ -20,9 +20,10 @@
 
 @media (min-width:761px) { .nav-links { gap:clamp(12px,1.8vw,28px); margin-left:clamp(18px,4vw,70px); } .nav-links a,.nav-cta { font-size:10px; } }
 
-.nav-links { flex:1; gap:clamp(16px,2.2vw,32px); justify-content:center; margin-left:0; }
+.nav-links { align-items:center; flex:1; gap:clamp(16px,2.2vw,32px); justify-content:center; margin-left:0; min-width:0; }
 .nav-links a,.nav-shop,.cart-link { font:500 10px var(--mono); text-transform:uppercase; white-space:nowrap; }
 .nav-links a[data-primary="collection"] { color:var(--orange); }
+.nav-links a.active { color:var(--orange); text-decoration:line-through; }
 .nav-actions { align-items:center; display:flex; flex:0 0 auto; gap:22px; }
 .nav-shop,.cart-link { align-items:center; display:flex; gap:7px; }
 .nav-shop:hover,.cart-link:hover { text-decoration:line-through; }
