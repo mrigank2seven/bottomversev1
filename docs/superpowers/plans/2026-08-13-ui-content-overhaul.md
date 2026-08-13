@@ -130,7 +130,7 @@ The remaining scattered `clamp()` display sizes in `css/pages.css`, `css/story.c
 - [ ] **Step 3: Verify the retrofit**
 
 Run: `grep -c 'var(--display-' css/styles.css`
-Expected: `6` (one per selector group touched above).
+Expected: `5` (one per selector group converted to a `var()` reference — the 6th selector group touched, `.fit-title h2`, is deleted outright rather than converted, since it falls through to the shared rule above instead).
 
 Run: `grep -c 'clamp(61px,7vw,108px)' css/styles.css`
 Expected: `0` (confirms the standalone `.fit-title h2` override was deleted, not just edited).
