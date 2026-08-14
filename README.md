@@ -2,6 +2,8 @@
 
 Static site for BOTTOMVERSE.
 
+Live: https://bottomverse.shop/
+
 Contact: Archit Kumar
 
 ## Structure
@@ -11,3 +13,4 @@ Contact: Archit Kumar
 - `css/` — shared and page-specific styles
 - `js/` — shared and page-specific behavior
 - `images/` — visual assets
+- `tests/` — unit tests
