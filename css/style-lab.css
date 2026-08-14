@@ -176,6 +176,7 @@
 .look-generator > .micro-label { color: var(--acid); }
 .look-generator h3 { font: 400 clamp(41px, 5vw, 77px)/.8 var(--display); letter-spacing: -.09em; margin: 21px 0 40px; }
 .look-grid { display: grid; gap: 1px; grid-template-columns: repeat(3, 1fr); }
+.look-scroll-cue { display: none; }
 .generated-look { background: var(--paper); color: var(--ink); min-height: 420px; padding: 24px; position: relative; }
 .generated-look:nth-child(2) { background: var(--orange); }
 .generated-look:nth-child(3) { background: var(--acid); }
@@ -248,6 +249,8 @@
   .why-copy > div + div { margin-top: 26px; }
   .look-generator { margin-top: 72px; }
   .look-grid { display: flex; margin-right: -22px; overflow-x: auto; padding-right: 22px; scroll-snap-type: x mandatory; }
+  .look-scroll-cue { align-items: center; color: var(--acid); display: flex; font: 500 10px var(--mono); gap: 8px; justify-content: flex-end; margin: 14px 0 0; }
+  .look-scroll-cue span { font-size: 16px; line-height: 0; }
   .generated-look { flex: 0 0 calc(100% - 28px); min-height: 430px; scroll-snap-align: start; }
   .proportion-section { display: block; padding: 70px 22px; }
   .proportion-intro p { margin-top: 27px; }

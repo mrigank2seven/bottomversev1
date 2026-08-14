@@ -167,6 +167,12 @@ footer { display:block; padding:0 clamp(22px,6vw,96px); }
 .support-list article:last-child { border-right:0; }
 .support-list h2 { font:400 clamp(30px,4vw,55px)/.82 var(--display); letter-spacing:-.08em; margin:70px 0 18px; }
 .support-list p { font-size:13px; line-height:1.45; max-width:230px; }
+.support-faq details { border-top:1px solid var(--ink); margin-top:16px; padding-top:12px; }
+.support-faq summary { cursor:pointer; font:500 10px/1.35 var(--mono); list-style:none; padding-right:14px; position:relative; text-transform:uppercase; }
+.support-faq summary::-webkit-details-marker { display:none; }
+.support-faq summary::after { content:"+"; position:absolute; right:0; }
+.support-faq details[open] summary::after { content:"−"; }
+.support-faq details p { font-size:12px; margin:12px 0 0; max-width:280px; }
 
 .grain-overlay { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"); inset:0; mix-blend-mode:multiply; opacity:.5; pointer-events:none; position:fixed; z-index:999; }
 @media (prefers-reduced-motion: reduce) { .grain-overlay { display:none; } }
