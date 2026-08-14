@@ -148,7 +148,7 @@
 .style-lab-results {
   background: var(--ink);
   color: var(--paper);
-  padding: 100px clamp(22px, 6vw, 96px) 112px;
+  padding: 100px clamp(22px, 6vw, 96px) clamp(56px, 5vw, 72px);
 }
 
 .style-lab-results-head { align-items: end; display: flex; justify-content: space-between; }
@@ -177,14 +177,33 @@
 .look-generator h3 { font: 400 clamp(41px, 5vw, 77px)/.8 var(--display); letter-spacing: -.09em; margin: 21px 0 40px; }
 .look-grid { display: grid; gap: 1px; grid-template-columns: repeat(3, 1fr); }
 .look-scroll-cue { display: none; }
-.generated-look { background: var(--paper); color: var(--ink); min-height: 420px; padding: 24px; position: relative; }
+.generated-look {
+  background: var(--paper);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  min-width: 0;
+  padding: 24px;
+}
 .generated-look:nth-child(2) { background: var(--orange); }
 .generated-look:nth-child(3) { background: var(--acid); }
 .generated-look > span { font: 500 10px var(--mono); }
-.generated-look h4 { font: 400 clamp(30px, 3.5vw, 55px)/.8 var(--display); letter-spacing: -.08em; margin: 36px 0 0; max-width: 230px; }
-.look-items { border-top: 1px solid rgba(16, 16, 16, .45); bottom: 25px; left: 24px; position: absolute; right: 24px; }
+.generated-look h4 {
+  font: 400 clamp(30px, 3.5vw, 55px)/.8 var(--display);
+  letter-spacing: -.08em;
+  margin: 36px 0 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+.look-items {
+  border-top: 1px solid rgba(16, 16, 16, .45);
+  margin-top: auto;
+  min-width: 0;
+  padding-top: 0;
+}
 .look-items p { border-bottom: 1px solid rgba(16, 16, 16, .45); display: flex; font: 500 10px/1.3 var(--mono); justify-content: space-between; margin: 0; padding: 11px 0; }
-.look-items p span:last-child { text-align: right; }
+.look-items p span:last-child { min-width: 0; overflow-wrap: anywhere; text-align: right; }
 .generated-look .look-why { font: 12px/1.4 var(--sans); margin: 21px 0 0; max-width: 250px; }
 .look-shop { border-bottom: 1px solid var(--ink); display: inline-block; font: 500 10px var(--mono); margin-top: 15px; padding-bottom: 4px; }
 .look-shop:hover { color: var(--orange); border-color: var(--orange); }
@@ -237,9 +256,9 @@
   .style-choices.skin-choices .style-choice:last-child { grid-column: span 2; }
   .style-choices.mood-choices .style-choice:last-child { grid-column: span 2; }
   .style-lab-form-actions { align-items: start; flex-direction: column; margin-top: 25px; }
-  .style-lab-results { padding: 70px 22px 80px; }
+  .style-lab-results { overflow-x: clip; padding: 70px 22px 56px; }
   .style-lab-results-head { align-items: start; display: block; }
-  .style-lab-results h2 { font-size: 57px; }
+  .style-lab-results h2 { font-size: clamp(42px, 11.5vw, 57px); overflow-wrap: break-word; }
   .style-lab-results-head > p { margin-top: 24px; text-align: left; }
   .palette-summary { display: block; margin-top: 47px; }
   .palette-summary h3 { margin-bottom: 25px; }
@@ -248,7 +267,7 @@
   .why-copy { display: block; margin-top: 30px; }
   .why-copy > div + div { margin-top: 26px; }
   .look-generator { margin-top: 72px; }
-  .look-grid { display: flex; margin-right: -22px; overflow-x: auto; padding-right: 22px; scroll-snap-type: x mandatory; }
+  .look-grid { display: flex; overflow-x: auto; padding-right: 22px; scroll-snap-type: x mandatory; }
   .look-scroll-cue { align-items: center; color: var(--acid); display: flex; font: 500 10px var(--mono); gap: 8px; justify-content: flex-end; margin: 14px 0 0; }
   .look-scroll-cue span { font-size: 16px; line-height: 0; }
   .generated-look { flex: 0 0 calc(100% - 28px); min-height: 430px; scroll-snap-align: start; }
@@ -258,7 +277,7 @@
   .proportion-card { min-height: 170px; }
   .core-section { padding: 72px 22px; }
   .style-lab-section-heading { align-items: start; display: block; }
-  .style-lab-section-heading h2 { font-size: 55px; }
+  .style-lab-section-heading h2 { font-size: clamp(42px, 11.5vw, 55px); overflow-wrap: break-word; }
   .style-lab-section-heading p:last-child { margin-top: 28px; }
   .core-grid { grid-template-columns: repeat(2, 1fr); margin-top: 38px; }
   .core-colour { min-height: 125px; }
