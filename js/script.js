@@ -25,62 +25,6 @@ const products = [
   },
 ];
 
-const primaryLinks = [
-  { label: 'Home', href: homeRoot, page: 'index.html' },
-  { label: 'Drop 001', href: `${pageRoot}drop.html`, page: 'drop.html' },
-  { label: 'Oversized Fit', href: `${pageRoot}fit.html`, page: 'fit.html' },
-  { label: 'Style Lab', href: `${pageRoot}style.html`, page: 'style.html' },
-  { label: 'Size & Fit Guide', href: `${pageRoot}fit-guide.html`, page: 'fit-guide.html' },
-  { label: 'Our Story', href: `${pageRoot}story.html`, page: 'story.html' },
-];
-
-function isCurrentPage(page) {
-  return window.location.pathname.endsWith(`/${page}`)
-    || (page === 'index.html' && (window.location.pathname === '/' || window.location.pathname.endsWith('/index.html')));
-}
-
-function createNavigationLink({ label, href, page }) {
-  const link = document.createElement('a');
-  link.href = href;
-  link.textContent = label;
-
-  if (isCurrentPage(page)) {
-    link.classList.add('active');
-    link.setAttribute('aria-current', 'page');
-  }
-
-  return link;
-}
-
-function renderPrimaryNavigation(selector) {
-  const navigation = document.querySelector(selector);
-  if (!navigation) return;
-
-  navigation.replaceChildren(...primaryLinks.map(createNavigationLink));
-
-  if (selector !== '.mobile-nav') {
-    return;
-  }
-
-  const divider = document.createElement('span');
-  divider.className = 'mobile-nav-divider';
-  divider.setAttribute('aria-hidden', 'true');
-
-  const shopLink = document.createElement('a');
-  shopLink.href = shopRoot;
-  shopLink.textContent = 'Shop';
-  shopLink.className = 'mobile-nav-shop';
-
-  const secondary = document.createElement('div');
-  secondary.className = 'mobile-nav-secondary';
-  secondary.innerHTML = `<a href="${accountRoot}#orders">Orders</a><a href="${accountRoot}">Account</a><a href="${supportRoot}">Support</a>`;
-
-  navigation.append(divider, shopLink, secondary);
-}
-
-renderPrimaryNavigation('.nav-links');
-renderPrimaryNavigation('.mobile-nav');
-
 function readCart() {
   try {
     const storedCart = JSON.parse(localStorage.getItem(cartStorageKey) || '[]');
@@ -119,45 +63,7 @@ function updateCartCount() {
   });
 }
 
-function renderNavActions() {
-  const existingAction = document.querySelector('.nav-cta');
-  if (!existingAction) return;
-
-  const actions = document.createElement('div');
-  actions.className = 'nav-actions';
-
-  const shopLink = document.createElement('a');
-  shopLink.className = 'nav-shop';
-  shopLink.href = shopRoot;
-  shopLink.textContent = 'Shop';
-  if (isCurrentPage('shop.html') || isCurrentPage('drop.html')) shopLink.classList.add('active');
-
-  const cartLink = document.createElement('a');
-  cartLink.className = 'cart-link';
-  cartLink.href = cartRoot;
-  cartLink.innerHTML = '<svg class="cart-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 1.9-1.4L21 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg><span class="cart-label">Cart</span><span class="cart-count" hidden>0</span>';
-
-  actions.append(shopLink, cartLink);
-  existingAction.replaceWith(actions);
-  updateCartCount();
-}
-
-renderNavActions();
-
-function renderFooter() {
-  const footer = document.querySelector('footer');
-  if (!footer) return;
-
-  footer.innerHTML = `<div class="footer-grid">
-    <div class="footer-brand-block"><a class="brand" href="${homeRoot}">BOTTOM<br><span>VERSE®</span></a><p>MADE WITH TOO MUCH SPACE.</p></div>
-    <div class="footer-column"><p>SHOP</p><a href="${shopRoot}">Shop</a><a href="${pageRoot}drop.html">Drop 001</a><a href="${pageRoot}fit.html">Oversized Fit</a><a href="${pageRoot}fit-guide.html">Size &amp; Fit Guide</a></div>
-    <div class="footer-column"><p>EXPLORE</p><a href="${pageRoot}style.html">Style Lab</a><a href="${pageRoot}story.html">Our Story</a></div>
-    <div class="footer-column"><p>SUPPORT</p><a href="${pageRoot}contact.html">Contact</a><a href="${supportRoot}#shipping">Shipping</a><a href="${supportRoot}#returns">Returns</a><a href="${supportRoot}#faq">FAQ</a></div>
-    <div class="footer-column"><p>ACCOUNT</p><a href="${accountRoot}#orders">Orders</a><a href="${accountRoot}">Account</a></div>
-  </div><div class="footer-bottom"><span>© 2026 BOTTOMVERSE</span><span>INDIA-WIDE SHIPPING / DROP 001 LIVE</span></div>`;
-}
-
-renderFooter();
+updateCartCount();
 
 function showToast(message) {
   let toast = document.querySelector('.site-toast');
