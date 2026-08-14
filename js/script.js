@@ -100,7 +100,7 @@ function addToCart(productId, size, colour, trigger) {
 }
 
 function productVisual(label = 'DROP<br>001') {
-  return `<div class="tee tee-product shop-tee"><span>bottom<br>verse</span><b>${label}</b><i>01</i></div>`;
+  return `<div class="tee-product shop-tee"><svg class="garment-svg" aria-hidden="true"><use href="#tee-flat"></use></svg><span>bottom<br>verse</span><b>${label}</b><i>01</i></div>`;
 }
 
 function productForm(product, compact = false) {
