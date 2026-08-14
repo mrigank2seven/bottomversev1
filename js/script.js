@@ -251,3 +251,50 @@ swatches.forEach((swatch) => {
     document.querySelectorAll('select[name="colour"]').forEach((select) => { select.value = swatch.dataset.colour[0] + swatch.dataset.colour.slice(1).toLowerCase(); });
   });
 });
+
+if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+  const revealTargets = document.querySelectorAll('[data-reveal]');
+  if (revealTargets.length) {
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    revealTargets.forEach((target) => revealObserver.observe(target));
+  }
+
+  const heroArt = document.querySelector('.hero-art');
+  if (heroArt) {
+    const heroTee = heroArt.querySelector('.tee-hero');
+    const heroSticker = heroArt.querySelector('.sticker-top');
+    window.addEventListener('scroll', () => {
+      const offset = window.scrollY * 0.08;
+      if (heroTee) heroTee.style.transform = `rotate(-9deg) translateY(${offset}px)`;
+      if (heroSticker) heroSticker.style.transform = `rotate(8deg) translateY(${offset * -0.6}px)`;
+    }, { passive: true });
+  }
+
+  const gsmSticker = document.querySelector('.sticker-top');
+  if (gsmSticker) {
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        countObserver.unobserve(entry.target);
+        const target = 240;
+        const duration = 900;
+        const start = performance.now();
+        function tick(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const value = Math.round(target * progress);
+          entry.target.innerHTML = `<svg class="badge-halftone" aria-hidden="true"><rect width="100%" height="100%" fill="url(#halftone-dots)"/></svg>${value} GSM<br>100% COTTON`;
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.6 });
+    countObserver.observe(gsmSticker);
+  }
+}
